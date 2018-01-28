@@ -5,9 +5,8 @@ from .backend_analysis import user_analysis
 from .backend_analysis import user_in_news_analysis
 
 
-# Create your views here.
-def hello(request):
-    return HttpResponse("Hello world ! ")
+def index(request):
+    return render(request, 'frontend/index.html')
 
 
 def compute_news_hot(request):

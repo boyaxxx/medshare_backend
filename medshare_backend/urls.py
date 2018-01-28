@@ -20,7 +20,7 @@ from analysis import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('hello', views.hello),
+    path('index', views.index),
     path('compute_news_hot', views.compute_news_hot),
     path('compute_users_hot', views.compute_users_hot),
     path('get_transmit_tree', views.get_transmit_tree),
