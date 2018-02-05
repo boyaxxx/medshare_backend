@@ -3,6 +3,10 @@ from django.http import HttpResponse
 from .backend_analysis import content_analysis
 from .backend_analysis import user_analysis
 from .backend_analysis import user_in_news_analysis
+from analysis.models import News
+from analysis.models import TransmitNews
+import json
+from django.core import serializers
 
 
 def index(request):
@@ -32,3 +36,35 @@ def find_important_user(request):
 def find_important_path(request):
     rst = user_in_news_analysis.find_important_path(6)
     return HttpResponse(rst)
+
+
+#最新内容
+def get_latest_news(request, top=3):
+    rst_list = News.objects.all().order_by("-createdAt").values("title", "writerName", "introduction","createdAt")[0:top]
+    #rst = json.dumps(rst_list)
+    #rst = serializers.serialize("json",rst_list)
+    return HttpResponse(rst_list)
+
+
+#最新活跃用户
+def get_latest_users(request, top=3):
+    rst_list = TransmitNews.objects.all().order_by("-updatedAt").values("viewerName", "updatedAt")[0:top]
+    return HttpResponse(rst_list)
+
+
+#TODO 总分享
+def get_total_transmit_number(request):
+    rst_list = None
+    return HttpResponse(rst_list)
+
+
+#TODO 总阅读
+def get_total_read_number(request):
+    rst_list = None
+    return HttpResponse(rst_list)
+
+
+#TODO 总覆盖用户
+def get_total_user_number(request):
+    rst_list = None
+    return HttpResponse(rst_list)

@@ -24,5 +24,9 @@ urlpatterns = [
     path('get_transmit_tree', views.get_transmit_tree),
     path('find_important_user', views.find_important_user),
     path('find_important_path', views.find_important_path),
+    path('get_latest_news', views.get_latest_news),
+    path('get_latest_users', views.get_latest_users),
+    path('get_latest_news/<int:top>', views.get_latest_news),
+    path('get_latest_users/<int:top>', views.get_latest_users),
     re_path(r'^$', views.index)
 ]
