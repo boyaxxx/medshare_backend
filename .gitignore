@@ -1,3 +1,7 @@
 .idea
 *.pyc
 *.pyo
+*.css.map
+*.js.map
+/static/asset-manifest.json
+/static/service-worker.js

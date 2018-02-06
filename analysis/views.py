@@ -6,6 +6,7 @@ from .backend_analysis import user_in_news_analysis
 from analysis.models import News
 from analysis.models import TransmitNews
 import json
+from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
 
 
@@ -41,15 +42,16 @@ def find_important_path(request):
 #最新内容
 def get_latest_news(request, top=3):
     rst_list = News.objects.all().order_by("-createdAt").values("title", "writerName", "introduction","createdAt")[0:top]
-    #rst = json.dumps(rst_list)
-    #rst = serializers.serialize("json",rst_list)
-    return HttpResponse(rst_list)
+    rst = json.dumps(list(rst_list), cls=DjangoJSONEncoder)
+    # rst = serializers.serialize("json",rst_list)
+    return HttpResponse(rst)
 
 
 #最新活跃用户
 def get_latest_users(request, top=3):
     rst_list = TransmitNews.objects.all().order_by("-updatedAt").values("viewerName", "updatedAt")[0:top]
-    return HttpResponse(rst_list)
+    rst = json.dumps(list(rst_list), cls=DjangoJSONEncoder)
+    return HttpResponse(rst)
 
 
 #TODO 总分享
