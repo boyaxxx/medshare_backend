@@ -27,10 +27,13 @@ class News(models.Model):
 
 class TransmitNews(models.Model):
     id = models.IntegerField(primary_key=True)
+    newsId = models.IntegerField()
     title = models.CharField(max_length=255)
     introduction = models.CharField(max_length=255)
     writerName = models.CharField(max_length=255)
+    viewerId = models.CharField(max_length=255)
     viewerName = models.CharField(max_length=255)
+    shareId = models.CharField(max_length=255)
     shareName = models.CharField(max_length=255)
     createdAt = models.DateTimeField()
     updatedAt = models.DateTimeField()

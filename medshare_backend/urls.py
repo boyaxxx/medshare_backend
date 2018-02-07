@@ -28,5 +28,6 @@ urlpatterns = [
     path('get_latest_users', views.get_latest_users),
     path('get_latest_news/<int:top>', views.get_latest_news),
     path('get_latest_users/<int:top>', views.get_latest_users),
+    path('get_user_log/<str:viewer_id>/<int:top>', views.get_user_log),
     re_path(r'^$', views.index)
 ]

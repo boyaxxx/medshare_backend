@@ -41,7 +41,7 @@ def find_important_path(request):
 
 #最新内容
 def get_latest_news(request, top=3):
-    rst_list = News.objects.all().order_by("-createdAt").values("title", "writerName", "introduction","createdAt")[0:top]
+    rst_list = News.objects.all().order_by("-createdAt").values("title", "writerName", "introduction","newsId","createdAt")[0:top]
     rst = json.dumps(list(rst_list), cls=DjangoJSONEncoder)
     # rst = serializers.serialize("json",rst_list)
     return HttpResponse(rst)
@@ -49,9 +49,16 @@ def get_latest_news(request, top=3):
 
 #最新活跃用户
 def get_latest_users(request, top=3):
-    rst_list = TransmitNews.objects.all().order_by("-updatedAt").values("viewerName", "updatedAt")[0:top]
+    rst_list = TransmitNews.objects.all().order_by("-updatedAt").values("viewerId","viewerName", "updatedAt")[0:top]
     rst = json.dumps(list(rst_list), cls=DjangoJSONEncoder)
     return HttpResponse(rst)
+
+
+
+#TODO 用户行为
+def get_user_log(request, viewer_id='',top=3):
+    rst_list = TransmitNews.objects.filter(viewerId=viewer_id).order_by("-updatedAt").values("viewerId","viewerName", "updatedAt", "title", "introduction", "newsId")[0:top]
+    return HttpResponse(rst_list)
 
 
 #TODO 总分享
