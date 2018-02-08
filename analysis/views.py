@@ -8,6 +8,7 @@ from analysis.models import TransmitNews
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
+from django.db import connection
 
 
 def index(request):
@@ -54,7 +55,6 @@ def get_latest_users(request, top=3):
     return HttpResponse(rst)
 
 
-
 #TODO 用户行为
 def get_user_log(request, viewer_id='',top=3):
     rst_list = TransmitNews.objects.filter(viewerId=viewer_id).order_by("-updatedAt").values("viewerId","viewerName", "updatedAt", "title", "introduction", "newsId")[0:top]
@@ -62,18 +62,44 @@ def get_user_log(request, viewer_id='',top=3):
 
 
 #TODO 总分享
-def get_total_transmit_number(request):
-    rst_list = None
+def get_total_transmit_number(request ,top=7):
+    cursor = connection.cursor()
+    cursor.execute('SELECT DATE_FORMAT(createdAt, \'%Y-%c-%d\') as time_day,COUNT(1) as cnt FROM transmit_news  GROUP BY DATE_FORMAT(createdAt, \'%Y-%c-%d\') ORDER BY createdAt DESC LIMIT ' + str(top))
+    rst_list = cursor.fetchall()
     return HttpResponse(rst_list)
 
 
 #TODO 总阅读
-def get_total_read_number(request):
-    rst_list = None
+def get_total_read_number(request ,top=7):
+    cursor = connection.cursor()
+    cursor.execute('SELECT DATE_FORMAT(createdAt, \'%Y-%c-%d\') as time_day,COUNT(1) as cnt FROM pv_news_log  GROUP BY DATE_FORMAT(createdAt, \'%Y-%c-%d\') ORDER BY createdAt DESC LIMIT ' + str(top))
+    rst_list = cursor.fetchall()
     return HttpResponse(rst_list)
 
 
 #TODO 总覆盖用户
-def get_total_user_number(request):
-    rst_list = None
+def get_total_user_number(request ,top=7):
+    cursor = connection.cursor()
+    cursor.execute('SELECT DATE_FORMAT(createdAt, \'%Y-%c-%d\') as time_day,COUNT(DISTINCT viewerId) as cnt FROM pv_news_log  GROUP BY DATE_FORMAT(createdAt, \'%Y-%c-%d\') ORDER BY createdAt DESC LIMIT ' + str(top))
+    rst_list = cursor.fetchall()
     return HttpResponse(rst_list)
+
+
+#TODO 用户地域分析
+def get_user_area(request):
+    cursor = connection.cursor()
+    cursor.execute(
+        'SELECT city,COUNT(DISTINCT userId) AS cnt FROM USER WHERE country = \'中国\' GROUP BY city ORDER BY cnt DESC ')
+    rst_list = cursor.fetchall()
+    return HttpResponse(rst_list)
+
+
+#TODO 用户数量分析
+def get_user_number(request ,top=7):
+    cursor = connection.cursor()
+    cursor.execute('SELECT DATE_FORMAT(createdAt, \'%Y-%c-%d\') as time_day,COUNT(DISTINCT userId) as cnt FROM user  GROUP BY DATE_FORMAT(createdAt, \'%Y-%c-%d\') ORDER BY createdAt DESC LIMIT ' + str(top))
+    rst_list = cursor.fetchall()
+    return HttpResponse(rst_list)
+
+
+

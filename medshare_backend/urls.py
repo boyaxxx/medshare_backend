@@ -29,5 +29,14 @@ urlpatterns = [
     path('get_latest_news/<int:top>', views.get_latest_news),
     path('get_latest_users/<int:top>', views.get_latest_users),
     path('get_user_log/<str:viewer_id>/<int:top>', views.get_user_log),
+    path('get_total_transmit_number', views.get_total_transmit_number),
+    path('get_total_transmit_number/<int:top>', views.get_total_transmit_number),
+    path('get_total_read_number', views.get_total_read_number),
+    path('get_total_read_number/<int:top>', views.get_total_read_number),
+    path('get_total_user_number', views.get_total_user_number),
+    path('get_total_user_number/<int:top>', views.get_total_user_number),
+    path('get_user_number', views.get_user_number),
+    path('get_user_number/<int:top>', views.get_user_number),
+    path('get_user_area', views.get_user_area),
     re_path(r'^$', views.index)
 ]
