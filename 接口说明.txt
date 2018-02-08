@@ -1,0 +1,39 @@
+1. 最新内容：
+get_latest_news/<int:top>
+返回json："title", "writerName", "introduction","newsId","createdAt"
+
+2. 最新活跃用户
+get_latest_users/<int:top>
+返回json："viewerId","viewerName", "updatedAt"
+
+3. 用户分析>用户行为日志
+get_user_log/<str:viewer_id>/<int:top>
+返回json："viewerId","viewerName", "updatedAt", "title", "introduction", "newsId"
+
+4. 热门内容榜单>内容趋势>总分享量
+get_total_transmit_number/<int:top>
+返回list：[日期:数量]
+
+5. 热门内容榜单>内容趋势>总阅读量
+get_total_read_number/<int:top>
+返回list：[日期:数量]
+
+6. 热门内容榜单>内容趋势>总覆盖用户量
+get_total_user_number/<int:top>
+返回list：[日期:数量]
+
+7.重点用户榜单>用户地域分布
+get_user_area
+返回list：[城市名：用户数量]
+
+8.重点用户榜单>用户数量变化趋势
+get_user_number/<int:top>
+返回list：[日期：用户数量]
+
+
+
+
+
+
+
+
