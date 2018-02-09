@@ -30,7 +30,9 @@ get_user_area
 get_user_number/<int:top>
 返回list：[日期：用户数量]
 
-
+9.取最近10篇文章的介绍生成词云图
+get_word_cloud
+返回list：[词：权重值]
 
 
 

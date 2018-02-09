@@ -9,6 +9,7 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
 from django.db import connection
+import jieba.analyse
 
 
 def index(request):
@@ -102,4 +103,14 @@ def get_user_number(request ,top=7):
     return HttpResponse(rst_list)
 
 
-
+#取最近10篇文章的介绍生成词云图
+def get_word_cloud(request):
+    content_txt = ''
+    cursor = connection.cursor()
+    cursor.execute('SELECT introduction from news order by createdAt limit 10' )
+    rst_list = cursor.fetchall()
+    for rst_txt in rst_list:
+        content_txt += rst_txt[0]
+    jieba.analyse.set_stop_words('./analysis/chineseStopWords.txt')
+    tags = jieba.analyse.extract_tags(content_txt, topK=100, withWeight=True)
+    return HttpResponse(tags)

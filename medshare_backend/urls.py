@@ -38,5 +38,6 @@ urlpatterns = [
     path('get_user_number', views.get_user_number),
     path('get_user_number/<int:top>', views.get_user_number),
     path('get_user_area', views.get_user_area),
+    path('get_word_cloud', views.get_word_cloud),
     re_path(r'^$', views.index)
 ]
