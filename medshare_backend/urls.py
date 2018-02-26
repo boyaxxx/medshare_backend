@@ -20,6 +20,7 @@ from analysis import views
 
 urlpatterns = [
     path('get_transmit_tree/<int:news_id>', views.get_transmit_tree),
+    path('find_important_user/<int:news_id>/<int:top>', views.find_important_user),
     path('find_important_user/<int:news_id>', views.find_important_user),
     path('find_important_path/<int:news_id>', views.find_important_path),
     path('get_latest_news', views.get_latest_news),

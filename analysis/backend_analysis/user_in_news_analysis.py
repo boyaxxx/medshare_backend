@@ -45,17 +45,36 @@ def get_re_transmit_map(newsId):
 
 
 
-#用户单篇被转发量统计
+#转发及阅读用户查询
+def get_all_transmit_pv_user_list(newsId):
+    transmit_user_list = []
+    db = pymysql.connect(host="localhost", user="root", passwd="123456", db="virus_source",charset='utf8')
+    cursor = db.cursor()
+    try:
+        sql = 'select distinct viewerId,viewerName from transmit_news where newsId=%s union select distinct viewerId,viewerName from pv_news_log where newsId=%s' % (newsId, newsId)
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        for viewerId,viewerName in result:
+            transmit_user_list.append((viewerId,viewerName))
+    except Exception as err:
+        print(err)
+    finally:
+        cursor.close()
+        db.close()
+    return transmit_user_list
+
+
+#转发用户查询
 def get_all_transmit_user_list(newsId):
     transmit_user_list = []
     db = pymysql.connect(host="localhost", user="root", passwd="123456", db="virus_source",charset='utf8')
     cursor = db.cursor()
     try:
-        sql = 'select distinct viewerId as cnt from transmit_news where newsId=%s '
+        sql = 'select distinct viewerId,viewerName as cnt from transmit_news where newsId=%s '
         cursor.execute(sql, newsId)
         result = cursor.fetchall()
-        for viewerId in result:
-            transmit_user_list.append(viewerId[0])
+        for viewerId,viewerName in result:
+            transmit_user_list.append((viewerId,viewerName))
     except Exception as err:
         print(err)
     finally:
@@ -69,6 +88,8 @@ def get_transmit_list(newsId):
     transmit_list = []
     db = pymysql.connect(host="localhost", user="root", passwd="123456", db="virus_source",charset='utf8')
     cursor = db.cursor()
+    node = TreeNode('0',' ', 'not anything 999', '-')
+    transmit_list.append(node)
     try:
         sql = 'select viewerId,viewerName, shareId, shareName  from transmit_news where newsId=%s   '
         cursor.execute(sql,newsId)
@@ -91,7 +112,7 @@ def build_transmit_tree(newsId):
     for each_node in transmit_list:
         mark = False
         for second_node in transmit_list:
-            if((each_node.share_id is not None or each_node.share_id != 0) and each_node.share_id == second_node.viewer_id):
+            if((each_node.share_id is not None or each_node.share_id != '0') and each_node.share_id == second_node.viewer_id):
                 mark = True
                 second_node.children.append(each_node)
                 break
@@ -102,33 +123,50 @@ def build_transmit_tree(newsId):
 
 #文章重点用户发现-django调用
 def find_important_user_django(newsId):
+    rst_list = []
     user_power = {}
-    all_transmit_user_list = get_all_transmit_user_list(newsId)
+    all_transmit_user_list = get_all_transmit_pv_user_list(newsId)
     user_re_pv = get_re_pv_map(newsId)
     user_re_transmit = get_re_transmit_map(newsId)
-    for user_id in all_transmit_user_list:
+    user_dict={}
+    for user_id,user_name in all_transmit_user_list:
+        user_dict[user_id] = user_name
         transmit_cnt = 0
         if user_id in user_re_transmit:
             transmit_cnt = user_re_transmit[user_id]
         pv_cnt = 0
         if user_id in user_re_pv:
             pv_cnt = user_re_pv[user_id]
-        #hot_value = 0.6*math.log(transmit_cnt+2, 10)+0.4*math.log(pv_cnt+1, 10)
-        hot_value = transmit_cnt
+        hot_value = 0.6*math.log(transmit_cnt+2, 10)+0.4*math.log(pv_cnt+1, 10)
+        #hot_value = transmit_cnt
         user_power[user_id] = hot_value
     sorted_user_power = sorted(user_power.items(),key = lambda x:x[1],reverse = True)
+    for user_id,hot_value in sorted_user_power:
+        rst={}
+        rst['name'] = user_dict[user_id]
+        rst['hot_value'] = hot_value
+        if user_id in user_re_pv:
+            rst['pv_value'] = user_re_pv[user_id]
+        else:
+            rst['pv_value'] = 0
+        if user_id in user_re_transmit:
+            rst['transmit_value'] = user_re_transmit[user_id]
+        else:
+            rst['transmit_value'] = 0
+        rst_list.append(rst)
     #return sorted_user_power
     print(sorted_user_power)
-    return sorted_user_power
+    return rst_list
 
 
 #文章重点用户发现-内部调用
 def find_important_user(newsId):
     user_power = {}
     all_transmit_user_list = get_all_transmit_user_list(newsId)
+    all_transmit_user_list.append(('0', ' '))#添加根节点
     user_re_pv = get_re_pv_map(newsId)
     user_re_transmit = get_re_transmit_map(newsId)
-    for user_id in all_transmit_user_list:
+    for user_id,user_name in all_transmit_user_list:
         transmit_cnt = 0
         if user_id in user_re_transmit:
             transmit_cnt = user_re_transmit[user_id]
@@ -140,12 +178,12 @@ def find_important_user(newsId):
         user_power[user_id] = hot_value
     sorted_user_power = sorted(user_power.items(),key = lambda x:x[1],reverse = True)
     #return sorted_user_power
-    print(sorted_user_power)
+    #print(sorted_user_power)
     return user_power
 
 #文章重点转发路径发现
 def find_important_path(newsId):
-    rst = []
+    rst_list = []
     node_list = build_transmit_tree(newsId)
     sorted_user_power = find_important_user(newsId)
     #一级转发节点遍历
@@ -157,9 +195,16 @@ def find_important_path(newsId):
     find_max_important_user(node_list,sorted_user_power, max_node_list)
     print("最具影响力转发路径：")
     for node in max_node_list:
-        print(node.viewer_id, sorted_user_power[node.viewer_id])
-        rst.append([node.viewer_id, sorted_user_power[node.viewer_id]])
-    return rst
+        #print(node.name, sorted_user_power[node.viewer_id])
+        rst = {}
+        if node.viewer_id == '0':
+            rst['name'] = '总传播量'
+        else:
+            rst['name'] = node.name
+        rst['important_value'] = sorted_user_power[node.viewer_id]
+        rst_list.append(rst)
+        #rst.append([node.name, sorted_user_power[node.viewer_id]])
+    return rst_list
 
 
  #递归将子节点影响力加到父节点上
@@ -193,8 +238,8 @@ def get_transmit_tree(newsId):
     node_list = build_transmit_tree(newsId)
     #for node in node_list:
     #   print(node)
-    json_str = json.dumps(node_list, default=lambda o: o.__dict__, sort_keys=True, indent=4)
-    print(json_str)
+    json_str = json.dumps(node_list[0], default=lambda o: o.__dict__, sort_keys=True, indent=4)
+    #print(json_str)
     return json_str
 
 

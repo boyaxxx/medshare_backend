@@ -58,5 +58,12 @@ get_news_info/<int:news_id>  【news_id:新闻ID】
 get_transmit_tree/<int:news_id>  【news_id:新闻ID】
 返回json:[ { "children": 子节点列表, "share_id": 父节点ID, "share_name": 父节点名称, "viewer_id": 当前节点ID, "viewer_name": 当前节点名称 } ]    【树形结构json，适用于echarts tree结构】
 
+14. 内容分析>关键传播路径
+find_important_path/<int:news_id>  【news_id:新闻ID】
+返回json:[{"name": "用户名称", "important_value": 传播量},]
 
+15. 内容分析>关键传播节点
+find_important_user/<int:news_id>/<int:top>  【news_id:新闻ID，top参数默认值为10】
+find_important_user/<int:news_id>
+返回json:[{"name": "用户名称", "hot_value": 影响力值, "pv_value": 阅读量, "transmit_value": 转发量},]
 

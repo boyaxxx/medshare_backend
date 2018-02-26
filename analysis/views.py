@@ -19,25 +19,31 @@ def index(request):
     return render(request, 'frontend/index.html')
 
 
-#生成转发路径树
+#传播路径分析，生成转发路径树
 def get_transmit_tree(request, news_id=0):
     rst = user_in_news_analysis.get_transmit_tree(news_id)
     return HttpResponse(rst)
 
-#发现转发重点用户
-def find_important_user(request, news_id=0):
-    rst = user_in_news_analysis.find_important_user_django(news_id)
+#传播路径分析，关键传播节点
+def find_important_user(request, news_id=0, top=10):
+    rst_list = user_in_news_analysis.find_important_user_django(news_id)
+    if len(rst_list) >= top:
+        rst_list = rst_list[0:top]
+    rst = json.dumps(list(rst_list), cls=DjangoJSONEncoder)
     return HttpResponse(rst)
 
-#发现转发重点路径
+#传播路径分析，发现转发重点路径
 def find_important_path(request, news_id=0):
-    rst = user_in_news_analysis.find_important_path(news_id)
+    rst_list = user_in_news_analysis.find_important_path(news_id)
+    rst = json.dumps(list(rst_list), cls=DjangoJSONEncoder)
     return HttpResponse(rst)
 
 
 #最新内容
 def get_latest_news(request, top=3):
-    rst_list = News.objects.all().order_by("-createdAt").values("title", "writerName", "introduction","newsId","createdAt")[0:top]
+    rst_list = News.objects.all().order_by("-createdAt").values("title", "writerName", "introduction","newsId","createdAt")
+    if len(rst_list) >= top:
+        rst_list = rst_list[0:top]
     rst = json.dumps(list(rst_list), cls=DjangoJSONEncoder)
     # rst = serializers.serialize("json",rst_list)
     return HttpResponse(rst)
@@ -45,14 +51,18 @@ def get_latest_news(request, top=3):
 
 #最新活跃用户
 def get_latest_users(request, top=3):
-    rst_list = TransmitNews.objects.all().order_by("-updatedAt").values("viewerId","viewerName", "updatedAt")[0:top]
+    rst_list = TransmitNews.objects.all().order_by("-updatedAt").values("viewerId","viewerName", "updatedAt")
+    if len(rst_list) >= top:
+        rst_list = rst_list[0:top]
     rst = json.dumps(list(rst_list), cls=DjangoJSONEncoder)
     return HttpResponse(rst)
 
 
 # 用户行为
 def get_user_log(request, viewer_id='',top=3):
-    rst_list = TransmitNews.objects.filter(viewerId=viewer_id).order_by("-updatedAt").values("viewerId","viewerName", "updatedAt", "title", "introduction", "newsId")[0:top]
+    rst_list = TransmitNews.objects.filter(viewerId=viewer_id).order_by("-updatedAt").values("viewerId","viewerName", "updatedAt", "title", "introduction", "newsId")
+    if len(rst_list) >= top:
+        rst_list = rst_list[0:top]
     return HttpResponse(rst_list)
 
 
