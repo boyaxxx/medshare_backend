@@ -14,6 +14,7 @@ from django.db import connection
 import jieba.analyse
 import math
 import datetime
+import pandas as pd
 
 
 def index(request):
@@ -93,11 +94,8 @@ def get_total_user_number(request ,top=7):
 
 # 用户地域分析
 def get_user_area(request):
-    cursor = connection.cursor()
-    cursor.execute(
-        'SELECT city,COUNT(DISTINCT userId) AS cnt FROM USER WHERE country = \'中国\' GROUP BY city ORDER BY cnt DESC ')
-    rst_list = cursor.fetchall()
-    return HttpResponse(rst_list)
+    area_lang_lat = single_user_analysis.get_user_area()
+    return HttpResponse(json.dumps(area_lang_lat, cls=DjangoJSONEncoder))
 
 
 # 用户数量分析

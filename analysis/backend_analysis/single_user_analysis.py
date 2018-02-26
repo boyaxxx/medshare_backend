@@ -3,6 +3,7 @@
 import pymysql
 import math
 import time
+import pandas as pd
 
 
 #用户全局浏览量统计
@@ -244,3 +245,27 @@ def get_pv_date_cnt_map(viewerId):
         cursor.close()
         db.close()
     return date_cnt_map
+
+def get_user_area():
+    area_lang_lat = []
+    df = pd.read_csv('./analysis/backend_analysis/area_long_lat.csv', sep='\t')
+    db = pymysql.connect(host="localhost", user="root", passwd="123456", db="virus_source",charset='utf8')
+    cursor = db.cursor()
+    cursor.execute(
+        'SELECT city,COUNT(DISTINCT userId) AS cnt FROM USER WHERE country = \'中国\' GROUP BY city ORDER BY cnt DESC ')
+    result_list = cursor.fetchall()
+    for result in result_list:
+        #province = result[0]
+        city = result[0]
+        user_cnt = result[1]
+        area_info = df.loc[df['country'].str.contains(city)]
+        longitude = area_info['longitude'].values[0]
+        latitude = area_info['latitude'].values[0]
+        rst = {}
+        rst['city'] = city
+        rst['user_cnt'] = user_cnt
+        rst['longitude'] = longitude
+        rst['latitude'] = latitude
+        area_lang_lat.append(rst)
+    return area_lang_lat
+
