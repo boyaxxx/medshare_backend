@@ -43,5 +43,11 @@ urlpatterns = [
     path('get_now_news_hot/<int:news_id>', views.get_now_news_hot),
     path('get_history_news_hot/<int:news_id>/<int:day_limit>', views.get_history_news_hot),
     path('get_history_news_hot/<int:news_id>', views.get_history_news_hot),
+    path('get_now_user_effect/<str:user_id>', views.get_now_user_effect),
+    path('get_history_user_effect/<str:user_id>/<int:day_limit>', views.get_history_user_effect),
+    path('get_history_user_effect/<str:user_id>', views.get_history_user_effect),
+    path('get_user_info/<str:user_id>', views.get_user_info),
+    path('get_user_active/<str:user_id>/<int:day_limit>', views.get_user_active),
+    path('get_user_active/<str:user_id>', views.get_user_active),
     re_path(r'^$', views.index)
 ]

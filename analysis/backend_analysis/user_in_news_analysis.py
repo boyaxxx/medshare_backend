@@ -155,7 +155,7 @@ def find_important_user_django(newsId):
             rst['transmit_value'] = 0
         rst_list.append(rst)
     #return sorted_user_power
-    print(sorted_user_power)
+    #print(sorted_user_power)
     return rst_list
 
 

@@ -116,44 +116,6 @@ def get_avg_max_transmit_map():
     return transmit_avg_max_map
 
 
-#单条内容用户浏览量统计
-def get_pv_map_in_news(newsId):
-    pv_map = {}
-    db = pymysql.connect(host="localhost", user="root", passwd="123456", db="virus_source",charset='utf8')
-    cursor = db.cursor()
-    try:
-        sql = 'select viewerId, count(1) as cnt from pv_news_log   where newsId=%s group by viewerId '
-        cursor.execute(sql, newsId)
-        result = cursor.fetchall()
-        for newsId, cnt in result:
-            pv_map[newsId] = cnt
-    except Exception as err:
-        print(err)
-    finally:
-        cursor.close()
-        db.close()
-    return pv_map
-
-#单条内容用户转发量统计
-def get_transmit_map_in_news(newsId):
-    transmit_map = {}
-    db = pymysql.connect(host="localhost", user="root", passwd="123456", db="virus_source",charset='utf8')
-    cursor = db.cursor()
-    try:
-        sql = 'select viewerId, count(1) as cnt from transmit_news where newsId=%s group by viewerId '
-        cursor.execute(sql, newsId)
-        result = cursor.fetchall()
-        for newsId, cnt in result:
-            transmit_map[newsId] = cnt
-    except Exception as err:
-        print(err)
-    finally:
-        cursor.close()
-        db.close()
-    return transmit_map
-
-
-
 #用户ID去重
 def get_all_user_id():
     userId_set = []

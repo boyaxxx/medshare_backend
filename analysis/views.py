@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .backend_analysis import content_analysis
 from .backend_analysis import single_content_analysis
+from .backend_analysis import single_user_analysis
 from .backend_analysis import user_analysis
 from .backend_analysis import user_in_news_analysis
 from analysis.models import News
@@ -58,7 +59,7 @@ def get_latest_users(request, top=3):
     return HttpResponse(rst)
 
 
-# 用户行为
+# 用户行为日志
 def get_user_log(request, viewer_id='',top=3):
     rst_list = TransmitNews.objects.filter(viewerId=viewer_id).order_by("-updatedAt").values("viewerId","viewerName", "updatedAt", "title", "introduction", "newsId")
     if len(rst_list) >= top:
@@ -166,7 +167,92 @@ def get_history_news_hot(request, news_id=0, day_limit=7):
         compute_time_str = next_day_str + ' 59:59:59'
         log_hot = single_content_analysis.compute_news_hot(news_id, compute_time_str)
         rst[next_day_str]=log_hot
+        #print(next_day_str)
+        day_index += 1
+        next_day = next_day - delta
+    return HttpResponse(json.dumps(rst, cls=DjangoJSONEncoder))
+
+
+#用户当前影响力分析
+def get_now_user_effect(request, user_id='0'):
+    rst = single_user_analysis.compute_now_users_hot(user_id)
+    return HttpResponse(json.dumps(rst, cls=DjangoJSONEncoder))
+
+#用户影响力趋势曲线
+def get_history_user_effect(request, user_id='0', day_limit=7):
+    rst = {}
+    max_news_day = single_user_analysis.get_max_user_time(user_id)
+    compute_time_str = max_news_day + ' 59:59:59'
+    log_hot = single_user_analysis.compute_history_users_hot(user_id, compute_time_str)
+    rst[max_news_day] = log_hot
+    start_day = datetime.datetime.strptime(max_news_day, "%Y-%m-%d")
+    delta = datetime.timedelta(days=1)
+    next_day = start_day - delta
+    day_index = 1
+    while (day_index < day_limit):
+        next_day_str = datetime.date.strftime(next_day, '%Y-%m-%d')
+        compute_time_str = next_day_str + ' 59:59:59'
+        log_hot = single_user_analysis.compute_history_users_hot(user_id, compute_time_str)
+        rst[next_day_str] = log_hot
         print(next_day_str)
         day_index += 1
         next_day = next_day - delta
     return HttpResponse(json.dumps(rst, cls=DjangoJSONEncoder))
+
+#取用户的基本信息
+def get_user_info(request, user_id=0):
+    rst = {}
+    cursor = connection.cursor()
+    cursor.execute('SELECT userId,userName,sex,province,city,country,headImgUrl from user where userId =\'%s\''% user_id )
+    result = cursor.fetchall()
+    if result is not None and len(result) > 0:
+        userId = result[0][0]
+        rst['userId'] = userId
+        userName = result[0][1]
+        rst['userName'] = userName
+        sex = result[0][2]
+        if sex==1:
+            rst['sex'] = '男'
+        if sex==2:
+            rst['sex'] = '女'
+        province = result[0][3]
+        rst['province'] = province
+        city = result[0][4]
+        rst['city'] = city
+        country = result[0][5]
+        rst['country'] = country
+        headImgUrl = result[0][6]
+        rst['headImgUrl'] = headImgUrl
+    return HttpResponse(json.dumps(rst, cls=DjangoJSONEncoder))
+
+
+#TODO 用户活跃度分析
+def get_user_active(request, user_id='0', day_limit=7):
+    rst = {}
+    pv_date_cnt_map = single_user_analysis.get_pv_date_cnt_map(user_id)
+    transmit_date_cnt_map = single_user_analysis.get_transmit_date_cnt_map(user_id)
+    max_news_day = single_user_analysis.get_max_user_time(user_id)
+    start_day = datetime.datetime.strptime(max_news_day, "%Y-%m-%d")
+    pv_cnt = 0
+    if max_news_day in pv_date_cnt_map:
+        pv_cnt = pv_date_cnt_map[max_news_day]
+    transmit_cnt = 0
+    if max_news_day in transmit_date_cnt_map:
+        transmit_cnt = transmit_date_cnt_map[max_news_day]
+    rst[max_news_day] = pv_cnt + transmit_cnt
+    delta = datetime.timedelta(days=1)
+    next_day = start_day - delta
+    day_index = 1
+    while (day_index < day_limit):
+        next_day_str = datetime.date.strftime(next_day, '%Y-%m-%d')
+        pv_cnt = 0
+        if next_day_str in pv_date_cnt_map:
+            pv_cnt = pv_date_cnt_map[next_day_str]
+        transmit_cnt = 0
+        if next_day_str in transmit_date_cnt_map:
+            transmit_cnt = transmit_date_cnt_map[next_day_str]
+        rst[next_day_str] = pv_cnt + transmit_cnt
+        day_index += 1
+        next_day = next_day - delta
+    return HttpResponse(json.dumps(rst, cls=DjangoJSONEncoder))
+

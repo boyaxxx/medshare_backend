@@ -8,62 +8,79 @@ get_latest_users/<int:top>
 get_latest_users                      【top参数默认值为3】
 返回json：[{"viewerId","viewerName", "updatedAt"}]
 
-3. 用户分析>用户行为日志
-get_user_log/<str:viewer_id>/<int:top>  【viewer_id:用户ID，top:取前几条日志 】
-get_user_log/<str:viewer_id>                      【top参数默认值为3】
-返回json：[{"viewerId","viewerName", "updatedAt", "title", "introduction", "newsId"}]
-
-4. 热门内容榜单>内容趋势>总分享量
+3. 热门内容榜单>内容趋势>总分享量
 get_total_transmit_number/<int:top>
 get_total_transmit_number                      【top参数默认值为7】
 返回list：[日期:数量]
 
-5. 热门内容榜单>内容趋势>总阅读量
+4. 热门内容榜单>内容趋势>总阅读量
 get_total_read_number/<int:top>
 get_total_read_number                      【top参数默认值为7】
 返回list：[日期:数量]
 
-6. 热门内容榜单>内容趋势>总覆盖用户量
+5. 热门内容榜单>内容趋势>总覆盖用户量
 get_total_user_number/<int:top>
 get_total_user_number                      【top参数默认值为7】
 返回list：[日期:数量]
 
-7.重点用户榜单>用户地域分布
+6.重点用户榜单>用户地域分布
 get_user_area
 返回list：[城市名：用户数量]
 
-8.重点用户榜单>用户数量变化趋势
+7.重点用户榜单>用户数量变化趋势
 get_user_number/<int:top>
 get_user_number                      【top参数默认值为7】
 返回list：[日期：用户数量]
 
-9.热门内容榜单>取最近10篇文章的介绍生成词云图
+8.热门内容榜单>取最近10篇文章的介绍生成词云图
 get_word_cloud
 返回list：[词：权重值]
 
-10.内容分析>热度分析>当前热度
+9.内容分析>热度分析>当前热度
 get_now_news_hot/<int:news_id>  【news_id:新闻ID】
 返回json：{"pv_cnt": 浏览量, "transmit_cnt": 转发量, "user_cover_cnt": 覆盖用户数, "hot_value": 当前热度值}
 
-11.内容分析>热度分析>热度趋势曲线
+10.内容分析>热度分析>热度趋势曲线
 get_history_news_hot/<int:news_id>/<int:day_limit>  【news_id:新闻ID，day_limit:天数 】
 get_history_news_hot/<int:news_id>                      【day_limit参数默认值为7】
 返回json：{日期：热度值}
 
-12.内容分析>取文章的标题及摘要
+11.内容分析>取文章的标题及摘要
 get_news_info/<int:news_id>  【news_id:新闻ID】
 返回json：{"title"：标题，"introduction"：内容}
 
-13. 内容分析>传播路径分析
+12. 内容分析>传播路径分析
 get_transmit_tree/<int:news_id>  【news_id:新闻ID】
 返回json:[ { "children": 子节点列表, "share_id": 父节点ID, "share_name": 父节点名称, "viewer_id": 当前节点ID, "viewer_name": 当前节点名称 } ]    【树形结构json，适用于echarts tree结构】
 
-14. 内容分析>关键传播路径
+13. 内容分析>关键传播路径
 find_important_path/<int:news_id>  【news_id:新闻ID】
 返回json:[{"name": "用户名称", "important_value": 传播量},]
 
-15. 内容分析>关键传播节点
+14. 内容分析>关键传播节点
 find_important_user/<int:news_id>/<int:top>  【news_id:新闻ID，top参数默认值为10】
 find_important_user/<int:news_id>
 返回json:[{"name": "用户名称", "hot_value": 影响力值, "pv_value": 阅读量, "transmit_value": 转发量},]
 
+15.用户分析>传播影响力分析>当前影响力
+get_now_user_effect/<str:user_id>  【user_id:用户ID】
+返回json：{"user_transmit_cnt": 用户主动转发量, "user_pv_cnt": 用户主动浏览量, "user_re_transmit_cnt": 用户被转发量, "user_re_pv_cnt": 用户被浏览量, "user_avg_transmit_cnt": 用户平均被转发量, "user_avg_pv_cnt": "用户平均被浏览量", "user_max_transmit_cnt": 用户最大被转发量, "user_max_pv_cnt": 用户最大被浏览量, "hot_value": 用户当前影响力值}
+
+16.用户分析>传播影响力分析>影响力趋势曲线
+get_history_user_effect/<str:user_id>/<int:day_limit>  【user_id:新闻ID，day_limit:天数 】
+get_history_user_effect/<str:user_id>                      【day_limit参数默认值为7】
+返回json：{日期：影响力值}
+
+17.用户分析>取用户基本信息
+get_user_info/<str:user_id> 【user_id:用户ID】
+返回json：{"userId":用户ID, "userName": 用户名, "sex": 性别, "province": 省份, "city": 城市, "country":国家, "headImgUrl":头像图片地址}
+
+18. 用户分析>用户活跃度分析
+get_user_active/<str:user_id>/<int:day_limit>       【user_id:用户ID，day_limit:天数 】
+get_user_active/<str:user_id>                     【day_limit参数默认值为7】
+返回json：{日期：用户活跃度值}
+
+19. 用户分析>用户行为日志
+get_user_log/<str:viewer_id>/<int:top>  【viewer_id:用户ID，top:取前几条日志 】
+get_user_log/<str:viewer_id>                      【top参数默认值为3】
+返回json：[{"viewerId","viewerName", "updatedAt", "title", "introduction", "newsId"}]
