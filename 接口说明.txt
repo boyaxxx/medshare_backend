@@ -25,7 +25,7 @@ get_total_user_number                      【top参数默认值为7】
 
 6.重点用户榜单>用户地域分布
 get_user_area
-返回list：[城市名：用户数量]
+返回json：[{"city": 城市名, "user_cnt": 用户数量, "longitude":经度, "latitude": 纬度},]
 
 7.重点用户榜单>用户数量变化趋势
 get_user_number/<int:top>
