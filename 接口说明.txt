@@ -1,25 +1,31 @@
 1. 最新内容：
 get_latest_news/<int:top>
-返回json："title", "writerName", "introduction","newsId","createdAt"
+get_latest_news                      【top参数默认值为3】
+返回json：[{"title", "writerName", "introduction","newsId","createdAt"}]
 
 2. 最新活跃用户
 get_latest_users/<int:top>
-返回json："viewerId","viewerName", "updatedAt"
+get_latest_users                      【top参数默认值为3】
+返回json：[{"viewerId","viewerName", "updatedAt"}]
 
 3. 用户分析>用户行为日志
-get_user_log/<str:viewer_id>/<int:top>
-返回json："viewerId","viewerName", "updatedAt", "title", "introduction", "newsId"
+get_user_log/<str:viewer_id>/<int:top>  【viewer_id:用户ID，top:取前几条日志 】
+get_user_log/<str:viewer_id>                      【top参数默认值为3】
+返回json：[{"viewerId","viewerName", "updatedAt", "title", "introduction", "newsId"}]
 
 4. 热门内容榜单>内容趋势>总分享量
 get_total_transmit_number/<int:top>
+get_total_transmit_number                      【top参数默认值为7】
 返回list：[日期:数量]
 
 5. 热门内容榜单>内容趋势>总阅读量
 get_total_read_number/<int:top>
+get_total_read_number                      【top参数默认值为7】
 返回list：[日期:数量]
 
 6. 热门内容榜单>内容趋势>总覆盖用户量
 get_total_user_number/<int:top>
+get_total_user_number                      【top参数默认值为7】
 返回list：[日期:数量]
 
 7.重点用户榜单>用户地域分布
@@ -28,14 +34,29 @@ get_user_area
 
 8.重点用户榜单>用户数量变化趋势
 get_user_number/<int:top>
+get_user_number                      【top参数默认值为7】
 返回list：[日期：用户数量]
 
-9.取最近10篇文章的介绍生成词云图
+9.热门内容榜单>取最近10篇文章的介绍生成词云图
 get_word_cloud
 返回list：[词：权重值]
 
+10.内容分析>热度分析>当前热度
+get_now_news_hot/<int:news_id>  【news_id:新闻ID】
+返回json：{"pv_cnt": 浏览量, "transmit_cnt": 转发量, "user_cover_cnt": 覆盖用户数, "hot_value": 当前热度值}
 
+11.内容分析>热度分析>热度趋势曲线
+get_history_news_hot/<int:news_id>/<int:day_limit>  【news_id:新闻ID，day_limit:天数 】
+get_history_news_hot/<int:news_id>                      【day_limit参数默认值为7】
+返回json：{日期：热度值}
 
+12.内容分析>取文章的标题及摘要
+get_news_info/<int:news_id>  【news_id:新闻ID】
+返回json：{"title"：标题，"introduction"：内容}
+
+13. 内容分析>传播路径分析
+get_transmit_tree/<int:news_id>  【news_id:新闻ID】
+返回json:[ { "children": 子节点列表, "share_id": 父节点ID, "share_name": 父节点名称, "viewer_id": 当前节点ID, "viewer_name": 当前节点名称 } ]    【树形结构json，适用于echarts tree结构】
 
 
 

@@ -78,11 +78,5 @@ def compute_news_hot():
     return rst
 
 
-#转发路径跟踪
-def transmit_tree():
-    print('todo')
-
-
-
 #compute_news_hot()
 

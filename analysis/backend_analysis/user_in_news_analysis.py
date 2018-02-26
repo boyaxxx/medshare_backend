@@ -191,8 +191,8 @@ def find_max_important_user(node_list, user_power, max_node_list):
 
 def get_transmit_tree(newsId):
     node_list = build_transmit_tree(newsId)
-    for node in node_list:
-        print(node)
+    #for node in node_list:
+    #   print(node)
     json_str = json.dumps(node_list, default=lambda o: o.__dict__, sort_keys=True, indent=4)
     print(json_str)
     return json_str

@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .backend_analysis import content_analysis
+from .backend_analysis import single_content_analysis
 from .backend_analysis import user_analysis
 from .backend_analysis import user_in_news_analysis
 from analysis.models import News
@@ -10,34 +11,27 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
 from django.db import connection
 import jieba.analyse
+import math
+import datetime
 
 
 def index(request):
     return render(request, 'frontend/index.html')
 
-#计算文章热度
-def compute_news_hot(request):
-    rst = content_analysis.compute_news_hot()
-    return HttpResponse(rst)
-
-#计算用户热度
-def compute_users_hot(request):
-    rst = user_analysis.compute_users_hot()
-    return HttpResponse(rst)
 
 #生成转发路径树
-def get_transmit_tree(request):
-    rst = user_in_news_analysis.get_transmit_tree(6)
+def get_transmit_tree(request, news_id=0):
+    rst = user_in_news_analysis.get_transmit_tree(news_id)
     return HttpResponse(rst)
 
 #发现转发重点用户
-def find_important_user(request):
-    rst = user_in_news_analysis.find_important_user_django(6)
+def find_important_user(request, news_id=0):
+    rst = user_in_news_analysis.find_important_user_django(news_id)
     return HttpResponse(rst)
 
 #发现转发重点路径
-def find_important_path(request):
-    rst = user_in_news_analysis.find_important_path(6)
+def find_important_path(request, news_id=0):
+    rst = user_in_news_analysis.find_important_path(news_id)
     return HttpResponse(rst)
 
 
@@ -114,3 +108,55 @@ def get_word_cloud(request):
     jieba.analyse.set_stop_words('./analysis/chineseStopWords.txt')
     tags = jieba.analyse.extract_tags(content_txt, topK=100, withWeight=True)
     return HttpResponse(tags)
+
+
+#取文章的标题及摘要
+def get_news_info(request, news_id=0):
+    rst = {}
+    cursor = connection.cursor()
+    cursor.execute('SELECT title,introduction from news where newsId = %d'% news_id )
+    result = cursor.fetchall()
+    if result is not None and len(result) > 0:
+        title = result[0][0]
+        rst['title'] = title
+        introduction = result[0][1]
+        rst['introduction'] = introduction
+    return HttpResponse(json.dumps(rst, cls=DjangoJSONEncoder))
+
+
+# 文章当前热度分析 参数：新闻ID，当前时间
+def get_now_news_hot(request, news_id=0):
+    rst={}
+    pv_cnt = single_content_analysis.get_pv(news_id)
+    transmit_cnt = single_content_analysis.get_transmit(news_id)
+    user_cover_cnt = single_content_analysis.get_user_cover(news_id)
+    hot_value = 0.4 * math.log(transmit_cnt + 1, 10) + 0.3 * math.log(pv_cnt + 1, 10) + 0.3 * math.log(
+        user_cover_cnt + 1, 10)  # user_cover权重0.3，pv权重0.3，transmit权重0.4
+    hot_value = float('%.2f' % hot_value)
+    rst['pv_cnt']=pv_cnt
+    rst['transmit_cnt']=transmit_cnt
+    rst['user_cover_cnt']=user_cover_cnt
+    rst['hot_value']=hot_value
+    return HttpResponse(json.dumps(rst, cls=DjangoJSONEncoder))
+
+
+# 文章热度曲线分析 参数：新闻ID，时间范围，默认7天
+def get_history_news_hot(request, news_id=0, day_limit=7):
+    rst={}
+    max_news_day = single_content_analysis.get_max_news_time(news_id)
+    compute_time_str = max_news_day+' 59:59:59'
+    log_hot = single_content_analysis.compute_news_hot(news_id, compute_time_str)
+    rst[max_news_day] = log_hot
+    start_day = datetime.datetime.strptime(max_news_day, "%Y-%m-%d")
+    delta = datetime.timedelta(days=1)
+    next_day = start_day - delta
+    day_index=1
+    while (day_index < day_limit):
+        next_day_str = datetime.date.strftime(next_day, '%Y-%m-%d')
+        compute_time_str = next_day_str + ' 59:59:59'
+        log_hot = single_content_analysis.compute_news_hot(news_id, compute_time_str)
+        rst[next_day_str]=log_hot
+        print(next_day_str)
+        day_index += 1
+        next_day = next_day - delta
+    return HttpResponse(json.dumps(rst, cls=DjangoJSONEncoder))
