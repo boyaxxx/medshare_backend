@@ -1,63 +1,63 @@
-1. 最新内容：
+1. 最新内容：//对接完成
 get_latest_news/<int:top>
 get_latest_news                      【top参数默认值为3】
 返回json：[{"title", "writerName", "introduction","newsId","createdAt"}]
 
-2. 最新活跃用户
+2. 最新活跃用户//对接完成
 get_latest_users/<int:top>
 get_latest_users                      【top参数默认值为3】
 返回json：[{"viewerId","viewerName", "updatedAt"}]
 
-3. 热门内容榜单>内容趋势>总分享量
+3. 热门内容榜单>内容趋势>总分享量//对接完成
 get_total_transmit_number/<int:top>
 get_total_transmit_number                      【top参数默认值为7】
 返回list：[日期:数量]
 
-4. 热门内容榜单>内容趋势>总阅读量
+4. 热门内容榜单>内容趋势>总阅读量//对接完成
 get_total_read_number/<int:top>
 get_total_read_number                      【top参数默认值为7】
 返回list：[日期:数量]
 
-5. 热门内容榜单>内容趋势>总覆盖用户量
+5. 热门内容榜单>内容趋势>总覆盖用户量//对接完成
 get_total_user_number/<int:top>
 get_total_user_number                      【top参数默认值为7】
 返回list：[日期:数量]
 
-6.重点用户榜单>用户地域分布
+6.重点用户榜单>用户地域分布//对接完成
 get_user_area
 返回json：[{"city": 城市名, "user_cnt": 用户数量, "longitude":经度, "latitude": 纬度},]
 
-7.重点用户榜单>用户数量变化趋势
+7.重点用户榜单>用户数量变化趋势//对接完成
 get_user_number/<int:top>
 get_user_number                      【top参数默认值为7】
 返回list：[日期：用户数量]
 
-8.热门内容榜单>取最近10篇文章的介绍生成词云图
+8.热门内容榜单>取最近10篇文章的介绍生成词云图//对接完成
 get_word_cloud
 返回list：[词：权重值]
 
-9.内容分析>热度分析>当前热度
+9.内容分析>热度分析>当前热度//对接完成
 get_now_news_hot/<int:news_id>  【news_id:新闻ID】
 返回json：{"pv_cnt": 浏览量, "transmit_cnt": 转发量, "user_cover_cnt": 覆盖用户数, "hot_value": 当前热度值}
 
-10.内容分析>热度分析>热度趋势曲线
+10.内容分析>热度分析>热度趋势曲线//对接完成
 get_history_news_hot/<int:news_id>/<int:day_limit>  【news_id:新闻ID，day_limit:天数 】
 get_history_news_hot/<int:news_id>                      【day_limit参数默认值为7】
 返回json：{日期：热度值}
 
-11.内容分析>取文章的标题及摘要
+11.内容分析>取文章的标题及摘要//对接完成
 get_news_info/<int:news_id>  【news_id:新闻ID】
 返回json：{"title"：标题，"introduction"：内容}
 
-12. 内容分析>传播路径分析
+12. 内容分析>传播路径分析//对接完成
 get_transmit_tree/<int:news_id>  【news_id:新闻ID】
 返回json:[ { "children": 子节点列表, "share_id": 父节点ID, "share_name": 父节点名称, "viewer_id": 当前节点ID, "viewer_name": 当前节点名称 } ]    【树形结构json，适用于echarts tree结构】
 
-13. 内容分析>关键传播路径
+13. 内容分析>关键传播路径//对接完成
 find_important_path/<int:news_id>  【news_id:新闻ID】
 返回json:[{"name": "用户名称", "important_value": 传播量},]
 
-14. 内容分析>关键传播节点
+14. 内容分析>关键传播节点//对接完成
 find_important_user/<int:news_id>/<int:top>  【news_id:新闻ID，top参数默认值为10】
 find_important_user/<int:news_id>
 返回json:[{"name": "用户名称", "hot_value": 影响力值, "pv_value": 阅读量, "transmit_value": 转发量},]

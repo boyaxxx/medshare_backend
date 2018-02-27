@@ -65,7 +65,8 @@ def get_user_log(request, viewer_id='',top=3):
     rst_list = TransmitNews.objects.filter(viewerId=viewer_id).order_by("-updatedAt").values("viewerId","viewerName", "updatedAt", "title", "introduction", "newsId")
     if len(rst_list) >= top:
         rst_list = rst_list[0:top]
-    return HttpResponse(rst_list)
+    rst = json.dumps(list(rst_list), cls=DjangoJSONEncoder)
+    return HttpResponse(rst)
 
 
 # 总分享
@@ -73,7 +74,8 @@ def get_total_transmit_number(request ,top=7):
     cursor = connection.cursor()
     cursor.execute('SELECT DATE_FORMAT(createdAt, \'%Y-%c-%d\') as time_day,COUNT(1) as cnt FROM transmit_news  GROUP BY DATE_FORMAT(createdAt, \'%Y-%c-%d\') ORDER BY createdAt DESC LIMIT ' + str(top))
     rst_list = cursor.fetchall()
-    return HttpResponse(rst_list)
+    rst = json.dumps(list(rst_list), cls=DjangoJSONEncoder)
+    return HttpResponse(rst)
 
 
 # 总阅读
@@ -81,7 +83,8 @@ def get_total_read_number(request ,top=7):
     cursor = connection.cursor()
     cursor.execute('SELECT DATE_FORMAT(createdAt, \'%Y-%c-%d\') as time_day,COUNT(1) as cnt FROM pv_news_log  GROUP BY DATE_FORMAT(createdAt, \'%Y-%c-%d\') ORDER BY createdAt DESC LIMIT ' + str(top))
     rst_list = cursor.fetchall()
-    return HttpResponse(rst_list)
+    rst = json.dumps(list(rst_list), cls=DjangoJSONEncoder)
+    return HttpResponse(rst)
 
 
 # 总覆盖用户
@@ -89,7 +92,8 @@ def get_total_user_number(request ,top=7):
     cursor = connection.cursor()
     cursor.execute('SELECT DATE_FORMAT(createdAt, \'%Y-%c-%d\') as time_day,COUNT(DISTINCT viewerId) as cnt FROM pv_news_log  GROUP BY DATE_FORMAT(createdAt, \'%Y-%c-%d\') ORDER BY createdAt DESC LIMIT ' + str(top))
     rst_list = cursor.fetchall()
-    return HttpResponse(rst_list)
+    rst = json.dumps(list(rst_list), cls=DjangoJSONEncoder)
+    return HttpResponse(rst)
 
 
 # 用户地域分析
@@ -103,7 +107,8 @@ def get_user_number(request ,top=7):
     cursor = connection.cursor()
     cursor.execute('SELECT DATE_FORMAT(createdAt, \'%Y-%c-%d\') as time_day,COUNT(DISTINCT userId) as cnt FROM user  GROUP BY DATE_FORMAT(createdAt, \'%Y-%c-%d\') ORDER BY createdAt DESC LIMIT ' + str(top))
     rst_list = cursor.fetchall()
-    return HttpResponse(rst_list)
+    rst = json.dumps(list(rst_list), cls=DjangoJSONEncoder)
+    return HttpResponse(rst)
 
 
 #取最近10篇文章的介绍生成词云图
@@ -116,7 +121,8 @@ def get_word_cloud(request):
         content_txt += rst_txt[0]
     jieba.analyse.set_stop_words('./analysis/chineseStopWords.txt')
     tags = jieba.analyse.extract_tags(content_txt, topK=100, withWeight=True)
-    return HttpResponse(tags)
+    rst = json.dumps(list(tags), cls=DjangoJSONEncoder)
+    return HttpResponse(rst)
 
 
 #取文章的标题及摘要
