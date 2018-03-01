@@ -62,25 +62,25 @@ find_important_user/<int:news_id>/<int:top>  【news_id:新闻ID，top参数默认值为10
 find_important_user/<int:news_id>
 返回json:[{"name": "用户名称", "hot_value": 影响力值, "pv_value": 阅读量, "transmit_value": 转发量},]
 
-15.用户分析>传播影响力分析>当前影响力
+15.用户分析>传播影响力分析>当前影响力//对接完成
 get_now_user_effect/<str:user_id>  【user_id:用户ID】
 返回json：{"user_transmit_cnt": 用户主动转发量, "user_pv_cnt": 用户主动浏览量, "user_re_transmit_cnt": 用户被转发量, "user_re_pv_cnt": 用户被浏览量, "user_avg_transmit_cnt": 用户平均被转发量, "user_avg_pv_cnt": "用户平均被浏览量", "user_max_transmit_cnt": 用户最大被转发量, "user_max_pv_cnt": 用户最大被浏览量, "hot_value": 用户当前影响力值}
 
-16.用户分析>传播影响力分析>影响力趋势曲线
+16.用户分析>传播影响力分析>影响力趋势曲线//对接完成
 get_history_user_effect/<str:user_id>/<int:day_limit>  【user_id:新闻ID，day_limit:天数 】
 get_history_user_effect/<str:user_id>                      【day_limit参数默认值为7】
 返回json：{日期：影响力值}
 
-17.用户分析>取用户基本信息
+17.用户分析>取用户基本信息//对接完成
 get_user_info/<str:user_id> 【user_id:用户ID】
 返回json：{"userId":用户ID, "userName": 用户名, "sex": 性别, "province": 省份, "city": 城市, "country":国家, "headImgUrl":头像图片地址}
 
-18. 用户分析>用户活跃度分析
+18. 用户分析>用户活跃度分析//对接完成
 get_user_active/<str:user_id>/<int:day_limit>       【user_id:用户ID，day_limit:天数 】
 get_user_active/<str:user_id>                     【day_limit参数默认值为7】
 返回json：{日期：用户活跃度值}
 
-19. 用户分析>用户行为日志
+19. 用户分析>用户行为日志//对接完成
 get_user_log/<str:viewer_id>/<int:top>  【viewer_id:用户ID，top:取前几条日志 】
 get_user_log/<str:viewer_id>                      【top参数默认值为3】
 返回json：[{"viewerId","viewerName", "updatedAt", "title", "introduction", "newsId"}]
