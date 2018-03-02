@@ -33,6 +33,7 @@ class TransmitNews(models.Model):
     writerName = models.CharField(max_length=255)
     viewerId = models.CharField(max_length=255)
     viewerName = models.CharField(max_length=255)
+    viewerHeadImg = models.CharField(max_length=255)
     shareId = models.CharField(max_length=255)
     shareName = models.CharField(max_length=255)
     createdAt = models.DateTimeField()

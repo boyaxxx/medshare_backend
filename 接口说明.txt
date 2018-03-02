@@ -6,7 +6,7 @@ get_latest_news                      【top参数默认值为3】
 2. 最新活跃用户//对接完成
 get_latest_users/<int:top>
 get_latest_users                      【top参数默认值为3】
-返回json：[{"viewerId","viewerName", "updatedAt"}]
+返回json：[{"viewerId","viewerName","viewerHeadImg", "updatedAt"}]
 
 3. 热门内容榜单>内容趋势>总分享量//对接完成
 get_total_transmit_number/<int:top>
@@ -84,3 +84,13 @@ get_user_active/<str:user_id>                     【day_limit参数默认值为7】
 get_user_log/<str:viewer_id>/<int:top>  【viewer_id:用户ID，top:取前几条日志 】
 get_user_log/<str:viewer_id>                      【top参数默认值为3】
 返回json：[{"viewerId","viewerName", "updatedAt", "title", "introduction", "newsId"}]
+
+20. 最新内容分页读取
+get_latest_news_by_page/<int:page_number>/<int:page_size>   【page_number参数默认值为1，page_size参数默认值为10】
+get_latest_news_by_page/<int:page_number>
+返回json：[{"title", "writerName", "introduction","newsId","createdAt"}]
+
+21. 最新活跃用户分页读取
+get_latest_users_by_page/<int:page_number>/<int:page_size>  【page_number参数默认值为1，page_size参数默认值为10】
+get_latest_users_by_page/<int:page_number>
+返回json：[{"viewerId","viewerName","viewerHeadImg", "updatedAt"}]

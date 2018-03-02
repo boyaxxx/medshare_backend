@@ -51,14 +51,31 @@ def get_latest_news(request, top=3):
     return HttpResponse(rst)
 
 
+#最新内容分页
+def get_latest_news_by_page(request, page_number=1, page_size=10):
+    rst_list = News.objects.all().order_by("-createdAt").values("title", "writerName", "introduction","newsId","createdAt")
+    if len(rst_list) >= page_size:
+        rst_list = rst_list[page_size*(page_number-1):page_size*page_number]
+    rst = json.dumps(list(rst_list), cls=DjangoJSONEncoder)
+    # rst = serializers.serialize("json",rst_list)
+    return HttpResponse(rst)
+
 #最新活跃用户
 def get_latest_users(request, top=3):
-    rst_list = TransmitNews.objects.all().order_by("-updatedAt").values("viewerId","viewerName", "updatedAt")
+    rst_list = TransmitNews.objects.all().order_by("-updatedAt").values("viewerId","viewerName","viewerHeadImg", "updatedAt")
     if len(rst_list) >= top:
         rst_list = rst_list[0:top]
     rst = json.dumps(list(rst_list), cls=DjangoJSONEncoder)
     return HttpResponse(rst)
 
+
+#最新活跃用户分页
+def get_latest_users_by_page(request, page_number=1, page_size=10):
+    rst_list = TransmitNews.objects.all().order_by("-updatedAt").values("viewerId","viewerName","viewerHeadImg", "updatedAt")
+    if len(rst_list) >= page_size:
+        rst_list = rst_list[page_size*(page_number-1):page_size*page_number]
+    rst = json.dumps(list(rst_list), cls=DjangoJSONEncoder)
+    return HttpResponse(rst)
 
 # 用户行为日志
 def get_user_log(request, viewer_id='',top=3):
