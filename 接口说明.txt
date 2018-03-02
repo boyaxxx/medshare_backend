@@ -88,9 +88,9 @@ get_user_log/<str:viewer_id>                      【top参数默认值为3】
 20. 最新内容分页读取
 get_latest_news_by_page/<int:page_number>/<int:page_size>   【page_number参数默认值为1，page_size参数默认值为10】
 get_latest_news_by_page/<int:page_number>
-返回json：[{"title", "writerName", "introduction","newsId","createdAt"}]
+返回json：{"total_count": 总数, "content_list":[{"title", "writerName", "introduction","newsId","createdAt",}]}
 
 21. 最新活跃用户分页读取
 get_latest_users_by_page/<int:page_number>/<int:page_size>  【page_number参数默认值为1，page_size参数默认值为10】
 get_latest_users_by_page/<int:page_number>
-返回json：[{"viewerId","viewerName","viewerHeadImg", "updatedAt"}]
+返回json：{"total_count": 总数, "user_list":[{"viewerId","viewerName","viewerHeadImg", "updatedAt"},]}
