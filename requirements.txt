@@ -35,7 +35,7 @@ datashape==0.5.4
 decorator==4.0.11
 dicom==0.9.9.post1
 dill==0.2.5
-Django==2.0.1
+Django==2.2.10
 docutils==0.13.1
 et-xmlfile==1.0.1
 fastcache==1.0.2
